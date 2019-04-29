@@ -1,7 +1,7 @@
 const wdk = require('wikidata-sdk');
 const request = require('request');
 
-const authorQid = 'Q535';
+// SPARQL Query
 const sparql = `
 SELECT ?item ?itemLabel ?pic ?linkTo
 WHERE
