@@ -18,11 +18,11 @@ const insertDocuments = function(db, callback){     //Insertion method
   console.log("Begin Insert");
   const collection = db.collection(collectionName);
   collection.insertMany([
-    {a: 1}, {a:2}, {a:3}            //Fixed values, these need to change for our purposes
+    {a: 1, b:3}, {a:2}, {a:3}, {a:8}            //Fixed values, these need to change for our purposes
   ], function(err, result){
     assert.equal(err, null);
-    assert.equal(3, result.result.n);
-    assert.equal(3, result.ops.length);
+    assert.equal(4, result.result.n);
+    assert.equal(4, result.ops.length);
     console.log("Inserted three documents to the collection <" + collectionName + ">");
     callback(result);
   });
@@ -53,7 +53,7 @@ const findNarrowDocuments = function(db, callback){   //Retrieval method, specif
 const updateDocuments = function(db, callback){   //Updates a document in a collection in a database in a context that matches a search term
   console.log("Begin Entry Update");
   const collection = db.collection(collectionName);
-  collection.updateOne({a : 2}, { $set: { b : 1 } }, function(err, result){   //{search term}, {$set: {appended term}} to do this, only first found
+  collection.updateMany({a : 2, b : 1}, { $set: { b : 1 }, $set: {c : 4}}, function(err, result){   //{search term}, {$set: {appended term}} to do this, only first found
     assert.equal(err, null);
     assert.equal(1, result.result.n);
     console.log("Updated document succesfully");
@@ -71,6 +71,18 @@ const removeDocument = function(db, callback){    //Removes a document as specif
     callback(result);
   })
 }
+
+const indexCollection = function(db, callback){   //Select specific field of a collection as that which is checked in queries of the database
+  console.log("Begin indexing collection <" + collectionName + ">");
+  db.collection(collectionName).createIndex(
+    {a : 1},              //Index item {key : value}
+    null,                 //Options
+    function(err, results){
+      console.log(results);
+      callback();
+    }
+  );
+};
 
 //All of the deleteOne/updateOne methods also have deleteMany/updateMany.
 
