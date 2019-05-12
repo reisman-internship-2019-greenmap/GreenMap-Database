@@ -1,7 +1,3 @@
-console.log('word');
-console.log('another')
-console.log('results')
-
 const wdk = require('wikidata-sdk');
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
