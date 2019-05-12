@@ -31,6 +31,7 @@ WHERE
 ORDER BY ?mass`
 
 var url2 = wdk.sparqlQuery(SPARQL);
+console.log(url2)
 xmlHttp.open("GET", url2, false);
 xmlHttp.send(null);
 console.log(url2);

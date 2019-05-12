@@ -73,4 +73,4 @@ const requestManufacturers = function(type){      //main function that can be ru
   });
 }
 
-console.log("Out:" + requestManufacturers("smartphone"));   //example usage; pretty easy.
+console.log("Out:" + requestManufacturers("marker"));   //example usage; pretty easy.
