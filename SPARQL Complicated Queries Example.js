@@ -62,3 +62,37 @@ request(url3, function(err, response, body) {
   console.log('Third');
   console.log(simplifiedResults);
 });
+
+const sparql2 = `
+SELECT ?itemLabel
+WHERE
+{
+  wd:Q22645 wdt:P279 ?item.
+  SERVICE wikibase:label {bd:serviceParam wikibase:language "en" }
+}`
+const url4 = wdk.sparqlQuery(sparql2);
+
+request(url4, function(err, response, body) {
+  simplifiedResults = wdk.simplify.sparqlResults(body);
+  console.log('Fourth');
+  console.log(simplifiedResults);
+});
+
+var SPARQL3 = `
+  SELECT ?superclassLabel
+  WHERE
+  {
+    ?product ?label \"` + "smartphone" + `\"@en.
+    ?prod ?code ?product.
+    ?prod wdt:P279 ?superclass.
+    SERVICE wikibase:label {bd:serviceParam wikibase:language "en" }
+  }
+  group by ?superclassLabel`
+
+  const url5 = wdk.sparqlQuery(SPARQL3);
+
+  request(url5, function(err, response, body) {
+    simplifiedResults = wdk.simplify.sparqlResults(body);
+    console.log('Fifth');
+    console.log(simplifiedResults);
+  });
