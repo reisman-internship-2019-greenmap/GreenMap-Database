@@ -13,7 +13,7 @@ const collectionManufacturer = 'manufacturers'
 const collectionProducts = 'products'
 const url = "mongodb+srv://" + username + ":" + password + "@" + context + "-crohe.gcp.mongodb.net/test?retryWrites=true"
 
-const requestManufacturers = function(type){      //main function that can be run elsewhere, takes product type name (ex. 'smart phone')
+const requestManufacturers = function(type, callback){      //main function that can be run elsewhere, takes product type name (ex. 'smart phone')
   MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){    //connect to MongoDB with const url containing username/password
     assert.equal(null, err)                       //Check for error
     console.log("Connected Succesfully");
@@ -23,7 +23,8 @@ const requestManufacturers = function(type){      //main function that can be ru
         attachESG(db, docs, function(final){
           client.close()                           //callback function: once done, close client and return the result
           console.log("Client Closed")
-          return final;
+          console.log(final)
+          callback(final)
         })
       })
     })
@@ -43,7 +44,7 @@ const acquirePreferredType = function(db, type, callback){
         })
       }
       else{
-        //do the valid tag, parent check
+        //do the valid tag, parent check, then expansive exploration if not valid
         callback(type); //condition on valid tag
     }
     });
@@ -121,11 +122,9 @@ const getManufacturers = function(db, key, docs, callback){    //Gets all docume
   console.log("Found:");
   console.log(docs);
   if(docs === null || docs === undefined || docs.length < 1){   //If no results or empty array results, query wikidata for the data
-    console.log("Here")                         //SPARQL request gets the specified product, then finds all manufacturers who make that product
-    SPARQLQueryManufacturer(db, key, callback)
+    SPARQLQueryManufacturer(db, key, callback) //SPARQL request gets the specified product, then finds all manufacturers who make that product
   }
   else{         //If data already present, just return the relevant data immediately
-    console.log("Out: " + docs[0].manufacturer)
     callback(docs[0].manufacturer);
   }
 }
@@ -173,7 +172,36 @@ const insertHold = function(db, key, value){     //Takes produced SPARQL results
 const attachESG = function(db, manufacturers, callback){
   console.log("Begin Attaching ESG to Manufacturers");
   const collection = db.collection(collectionManufacturer);
-  callback()
+  var final = []
+  attachManufacturer(collection, 0, manufacturers, final, callback)
 }
 
-console.log("Out:" + requestManufacturers("crayon"));   //example usage; pretty easy.
+const attachManufacturer = function(collection, place, manufacturers, final, callback){
+  if(place === manufacturers.length){
+    callback(final);
+    return
+  }
+  collection.find({manufacturer: manufacturers[place]}).toArray(function(err, docs){
+    assert.equal(err, null);
+    if(docs.length < 1){
+      var score = getESGScore(manufacturer)
+      collection.insertOne({manufacturer: manufacturers[place], esg: score}, function(err, result){
+        assert.equal(err, null)
+        attachManufacturer(collection, place, manufacturers, final, callback);
+      });
+    }
+    else{
+      final[place] = docs
+      attachManufacturer(collection, place + 1, manufacturers, final, callback);
+    }
+  })
+}
+
+const getESGScore(manufacturer){  //so we can easily replace this with real data
+  return Math.floor((Math.random() * 80 + 20));
+}
+
+requestManufacturers("smartphone", function(final){ //have to provide callback with result
+  console.log("Out:")
+  console.log(final)
+})
