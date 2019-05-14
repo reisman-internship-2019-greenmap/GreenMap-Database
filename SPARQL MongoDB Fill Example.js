@@ -201,7 +201,13 @@ const getESGScore(manufacturer){  //so we can easily replace this with real data
   return Math.floor((Math.random() * 80 + 20));
 }
 
-requestManufacturers("smartphone", function(final){ //have to provide callback with result
+//How to use: as follows
+
+var searchTerm = "smartphone"   //Your search term
+
+var response = function(results){   //A callback function using the results
   console.log("Out:")
   console.log(final)
-})
+}
+
+requestManufacturers(searchTerm, response); //The function call
