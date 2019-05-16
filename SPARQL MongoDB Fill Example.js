@@ -197,7 +197,7 @@ const attachManufacturer = function(collection, place, manufacturers, final, cal
   })
 }
 
-const getESGScore(manufacturer){  //so we can easily replace this with real data
+const getESGScore = function(manufacturer){  //so we can easily replace this with real data
   return Math.floor((Math.random() * 80 + 20));
 }
 
@@ -207,7 +207,7 @@ var searchTerm = "smartphone"   //Your search term
 
 var response = function(results){   //A callback function using the results
   console.log("Out:")
-  console.log(final)
+  console.log(results)
 }
 
 requestManufacturers(searchTerm, response); //The function call
