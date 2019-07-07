@@ -21,8 +21,6 @@ const insertDocuments = function(db, callback){     //Insertion method
     {a: 1, b:3}, {a:2}, {a:3}, {a:8}            //Fixed values, these need to change for our purposes
   ], function(err, result){
     assert.equal(err, null);
-    assert.equal(4, result.result.n);
-    assert.equal(4, result.ops.length);
     console.log("Inserted three documents to the collection <" + collectionName + ">");
     callback(result);
   });
@@ -55,7 +53,6 @@ const updateDocuments = function(db, callback){   //Updates a document in a coll
   const collection = db.collection(collectionName);
   collection.updateMany({a : 2, b : 1}, { $set: { b : 1 }, $set: {c : 4}}, function(err, result){   //{search term}, {$set: {appended term}} to do this, only first found
     assert.equal(err, null);
-    assert.equal(1, result.result.n);
     console.log("Updated document succesfully");
     callback(result);
   })
@@ -66,7 +63,6 @@ const removeDocument = function(db, callback){    //Removes a document as specif
   const collection = db.collection(collectionName);
   collection.deleteOne({a : 3}, function(err, result){    //It's the whole {a : 3} part, can add terms probably.API isn't great.
     assert.equal(err, null);
-    assert.equal(1, result.result.n);
     console.log("Removed document succesfully (containing {a : 3})");
     callback(result);
   })
